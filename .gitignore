@@ -12,3 +12,6 @@ out/
 
 # PyCharm
 .idea/
+
+# VS Code
+.vscode/

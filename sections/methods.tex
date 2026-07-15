@@ -1,1 +1,37 @@
 \section{Methods}
+
+\subsection{Data Generation}
+
+\subsection{Cluster Training}
+
+\subsection{Evaluation}
+
+\subsection{Interventions}
+
+A model trained purely on next-frame MSE could achieve deceptively strong rollout
+accuracy without learning any of the underlying cellular-automaton dynamics, since
+consecutive Lenia frames are highly autocorrelated and a near-identity prediction
+already scores well (Section~\ref{subsection:Evaluation}). To disentangle genuine physical
+understanding from simple frame-copying, we designed a set of interventions
+that perturb the simulation state mid-rollout and test whether each model's
+prediction still matches the behaviour of the true Lenia update rule. Concretely,
+each model is first rolled out autoregressively for $t^{*}=10$ steps from a
+held-out initial frame, using only its own predictions as input. The resulting
+frame is then edited with one of five manually applied perturbations and fed back into
+the model for a further 30 steps. The identical perturbation, with matching random
+parameters (blob position, noise seed, etc.), is applied to the ground-truth Lenia
+simulation at the same step, so that both trajectories start from the same
+intervened state and can be compared directly at every subsequent step. We evaluate
+five interventions, each targeting a different aspect of the underlying physics.
+First, we inject a new "organism" (a Gaussian-blob seed) as intervention to test whether newly introduced
+structures are correctly integrated. A second intervention method is zeroing a circular region to test whether
+local death and regrowth are modelled. Furthermore, mirroring a small patch was applied to test sensitivity
+to local symmetry breaking. To test whether global mass/intensity relationships are tracked we globally scaled the frame's density. 
+Lastly, we intervened by adding pixel-wise Gaussian noise to test robustness to low-level corruption. Since no model observed
+perturbed states during training, all five interventions are inherently
+out-of-distribution, so a correct continuation reflects generalised understanding
+of the Lenia update rule rather than memorised transitions. Results are averaged
+over five active (non-dying) validation trajectories, excluding trajectories in
+which the organism decays before the evaluation window ends, to avoid the
+trivially low error scores produced when every model simply predicts a black
+frame.
