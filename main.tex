@@ -1,22 +1,99 @@
-\documentclass{article}
+\documentclass[11pt,a4paper]{scrartcl}
 
+% Encoding
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[backend=bibtex]{biblatex}
+\usepackage[english]{babel}
+
+% Bibliography
+\usepackage[style=apa, backend=biber, sortcites, url=true]{biblatex}
 \addbibresource{references.bib}
 
-\title{World Models: Lenia}
-\author{Anna Fastus \and Alicia Diem (3745356) \and  Eric Minor \and Theodor Dorotsky}
-\date{\today}
+% Floats & figures
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{adjustbox}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+% Tables
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{booktabs}
+
+% Math
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Typography
+\usepackage{csquotes}
+\usepackage[onehalfspacing]{setspace}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\emergencystretch=0.5em
+\usepackage{enumitem}
+
+% Page layout
+\usepackage{geometry}
+\geometry{left=27mm, right=28mm, top=25mm, bottom=30mm}
+
+% Header / footer
+\usepackage[automark, headsepline, ilines]{scrlayer-scrpage}
+\usepackage{scrhack}
+\clearpairofpagestyles
+\automark{section}
+\ihead{\headmark}
+\ohead{Fastus, Diem, Minor, Dorotsky}
+\cfoot[\pagemark]{\pagemark}
+
+% Section font sizes (Uni Leipzig style)
+\setkomafont{section}{\normalfont\LARGE\bfseries}
+\setkomafont{subsection}{\normalfont\Large\bfseries}
+\setkomafont{subsubsection}{\normalfont\bfseries}
+
+% Cross-references
+\usepackage[hidelinks]{hyperref}
+\usepackage[english,nameinlink]{cleveref}
+
+% ─────────────────────────────────────────────────────────────────────────────
 
 \begin{document}
-\maketitle
 
-\input{sections/introduction}
-\input{sections/methods}
-\input{sections/results}
-\input{sections/discussion}
+% ===== Title page =====
+\begin{titlepage}
+    \centering
+    {\scshape\LARGE Universität Leipzig \par}
+    \vspace{1cm}
+    {\huge\bfseries World Models for Lenia Cellular Automata \par}
+    \vspace{1.5cm}
+    {\LARGE Seminar Report — \textit{Mathematics and AI Internship}\par}
+    \vspace{2cm}
+    {\Large\itshape
+        Anna Fastus \par \vspace{4pt}
+        Alicia Diem (3745356) \par \vspace{4pt}
+        Eric Minor \par \vspace{4pt}
+        Theodor Dorotsky (3778660) \par}
+    \vfill
+    {\large \today \par}
+\end{titlepage}
 
-\printbibliography
+\pagenumbering{roman}
+\tableofcontents
+
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ===== Sections =====
+\input{sections/introduction}   % Anna         (~0.5 p)
+\input{sections/data}           % Alicia, Eric (~2 p)
+\input{sections/methods}        % Theo, Alicia (~3 p)
+\input{sections/results}        % Anna         (~2 p)
+\input{sections/discussion}     % Theo         (~1 p)
+\input{sections/conclusion}     % Eric         (~0.5 p)
+
+% ===== Bibliography =====
+\clearpage
+\printbibliography[heading=bibintoc, title={References}]
 
 \end{document}

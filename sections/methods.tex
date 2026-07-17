@@ -1,12 +1,23 @@
+% Authors: Theo (Model Architectures), Alicia (Evaluation & Interventions) (~3 pages)
 \section{Methods}
 
-\subsection{Data Generation}
+% ── Theo ─────────────────────────────────────────────────────────────────────
+\subsection{Model Architectures}
 
-\subsection{Cluster Training}
+We compare three world model architectures, all trained on the v2 Lenia dataset.
+Each model takes a single grayscale frame $\mathbf{x}_t \in [0,1]^{64\times64}$
+as input and produces a prediction $\hat{\mathbf{x}}_{t+1}$.
 
-\subsection{Evaluation}
+\subsubsection{Pixel-CNN}
 
-\subsection{Interventions}
+\subsubsection{Pixel-ViT}
+
+\subsubsection{Patch-JEPA}
+
+% ── Alicia ───────────────────────────────────────────────────────────────────
+\subsection{Evaluation Setup}
+
+\subsection{Intervention Experiments}
 
 A model trained purely on next-frame MSE could achieve deceptively strong rollout
 accuracy without learning any of the underlying cellular-automaton dynamics, since
@@ -26,7 +37,7 @@ five interventions, each targeting a different aspect of the underlying physics.
 First, we inject a new "organism" (a Gaussian-blob seed) as intervention to test whether newly introduced
 structures are correctly integrated. A second intervention method is zeroing a circular region to test whether
 local death and regrowth are modelled. Furthermore, mirroring a small patch was applied to test sensitivity
-to local symmetry breaking. To test whether global mass/intensity relationships are tracked we globally scaled the frame's density. 
+to local symmetry breaking. To test whether global mass/intensity relationships are tracked we globally scaled the frame's density.
 Lastly, we intervened by adding pixel-wise Gaussian noise to test robustness to low-level corruption. Since no model observed
 perturbed states during training, all five interventions are inherently
 out-of-distribution, so a correct continuation reflects generalised understanding

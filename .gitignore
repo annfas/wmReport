@@ -9,9 +9,15 @@ out/
 *.fls
 *.fdb_latexmk
 *.out
+*.bcf
+*.run.xml
+*-blx.bib
 
 # PyCharm
 .idea/
 
 # VS Code
 .vscode/
+
+# template folder
+template/
