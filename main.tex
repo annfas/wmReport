@@ -22,6 +22,12 @@
 \usepackage{tabularx}
 \usepackage{booktabs}
 
+%Apa konforme Tabelle
+\DeclareCaptionFormat{apatable}{#1\par\vspace{\baselineskip}#3\par}
+\captionsetup[table]{format=apatable, labelfont=bf, labelsep=none,
+                     textfont=it, justification=raggedright,
+                     singlelinecheck=false}
+
 % Math
 \usepackage{amsmath}
 \usepackage{amssymb}

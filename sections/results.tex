@@ -1,2 +1,40 @@
 % Author: Anna (~2 pages)
 \section{Results}
+
+\subsection {Model Training}
+
+Hyperparameters for all models were selected with Optuna using a seperate study for each model and a median pruner that terminates weak trials early.
+The best configurations were then trained for another 100 epochs with cosine annealing and early-stopping.
+The final validation losses are reported in Table~ref{tab:training}.
+
+When interpreting these results, one needs to bear in mind, that pixel models minimize pixel-space MSE whereas JEPA models minimize an embedding-space MSE with VICReg regularization.
+Hence, values for both approaches are not directly comparable with each other.
+
+\begin{table}[h]
+\caption{Final Validation Losses After Full Training on the v2 Dataset}
+\label{tab:training}
+\begin{tabular}{llll}
+\toprule
+Model & Validation loss & Loss space & Epochs \\
+\midrule
+Pixel-CNN & 0.019 & pixel MSE & 100 \\
+Pixel-ViT & 0.022 & pixel MSE & 100 \\
+JEPA-CNN & 0.049 & embedding MSE + VICReg & 100 \\
+Patch-JEPA & 0.013 & embedding MSE + VICReg & 100 \\
+PatchDecoder & 0.00085 & pixel MSE (next frame) & 100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\\
+
+For Patch-JEPA, a separate PatchDecoder was trained on the frozen encoder and predictor to map predicted patch embeddings back to pixel space (validation loss 0.000845, next-frame pixel MSE). All quantitative comparisons in the following subsections are therefore carried out in pixel space.
+
+\subsection {Evaluation}
+
+
+
+
+
+
+
