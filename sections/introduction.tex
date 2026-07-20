@@ -1,2 +1,33 @@
 % Author: Anna (~0.5 page)
 \section{Introduction}
+Humans maintain an internal mental model of the world that allows them to simulate the consequences of events and actions without actually carrying them out.
+This ability underlies core cognitive skills such as planning and decision-making.
+In machine learning, world models learn the dynamics of an environment in order to predict future states from past observations, mapping a state at time $t$ to a state at time $t+1$ \parencite{https://doi.org/10.5281/zenodo.1207631}.
+World Models therefore are equivalent to the internal models of humans \parencite{lecun2022path}.
+In the classical formulation of Ha and Schmidhuber, such a model consists of three components: a vision component $V$ that compresses observations into a compact representation, a memory or dynamics component $M$ that predicts how this representation evolves over time, and a controller $C$ that selects actions based on the learned representation \parencite{https://doi.org/10.5281/zenodo.1207631}.
+Classical approaches perform prediction directly in pixel space and condition the dynamics model on the actions of an agent.
+More recent architectures such as the Joint Embedding Predictive Architecture (JEPA) instead perform prediction in a learned latent space, which avoids modeling irrelevant pixel level detail, and treat action conditioning as optional \parencite{lecun2022path}.
+\\
+
+As a testbed we use Lenia, a continuous generalization of Conway's Game of Life \parencite{Chan2019Lenia, 9dca666c-8536-3d47-b0e4-6be2acc6bf4e}
+Whereas classical cellular automata operate on binary cell states, Lenia uses continuous states in $[0,1]$ and continuous update rules, giving rise to rich, lifelike patterns \parencite{Chan2019Lenia}.
+Lenia is a particularly attractive environment for studying world models as it contains no agent and hence no actions.
+Its underlying physics is fully known making it possible to evaluate precisely whether a learned model has captured the true dynamics of the environment.
+\\
+
+This work addresses the following research question:
+\begin{itemize}
+    \item Does a world model trained in embedding space (JEPA style) learn better dynamics on Lenia than classical pixel space predictors?
+\end{itemize}
+
+Our work implements the vision and memory components of the world model framework.
+Since Lenia contains no actions, no controller can be implemented.
+This approach is consistent with the broader motivation behind world models \parencite{maes2026leworldmodelstableendtoendjointembedding}.
+The objective is not to optimize behaviour for a specific task, but to learn representations that capture the dynamics of the environment.
+Later on, the dynamics can be controlled or adapted to a diverse set of tasks.
+Accordingly, we deliberately evaluate the vision and memory components only, building the task independent core of the world model.
+By using controlled interventions as a proxy for the question of whether the learned model would be suitable for downstream planing.
+Hence, building a controller is not part of this work.
+
+
+

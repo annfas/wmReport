@@ -6,7 +6,7 @@
 \usepackage[english]{babel}
 
 % Bibliography
-\usepackage[style=apa, backend=biber, sortcites, url=true]{biblatex}
+\usepackage[style=apa, backend=biber, url=true]{biblatex}
 \addbibresource{references.bib}
 
 % Floats & figures
@@ -21,6 +21,12 @@
 \usepackage{longtable}
 \usepackage{tabularx}
 \usepackage{booktabs}
+
+%Apa konforme Tabelle
+\DeclareCaptionFormat{apatable}{#1\par\vspace{\baselineskip}#3\par}
+\captionsetup[table]{format=apatable, labelfont=bf, labelsep=none,
+                     textfont=it, justification=raggedright,
+                     singlelinecheck=false}
 
 % Math
 \usepackage{amsmath}
@@ -69,7 +75,7 @@
     {\LARGE Seminar Report — \textit{Mathematics and AI Internship}\par}
     \vspace{2cm}
     {\Large\itshape
-        Anna Fastus \par \vspace{4pt}
+        Anna Fastus (3793192) \par \vspace{4pt}
         Alicia Diem (3745356) \par \vspace{4pt}
         Eric Minor \par \vspace{4pt}
         Theodor Dorotsky (3778660) \par}
