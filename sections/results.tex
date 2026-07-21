@@ -3,11 +3,11 @@
 
 \subsection {Model Training}
 
-Hyperparameters for all models were selected with Optuna using a seperate study for each model and a median pruner that terminates weak trials early.
-The best configurations were then trained for another 100 epochs with cosine annealing and early-stopping.
-The final validation losses are reported in Table~ref{tab:training}.
+Hyperparameters for all models were selected with Optuna using a separate study for each model and a median pruner that terminates weak trials early.
+The best configurations were then trained for 100 epochs with cosine annealing and early stopping.
+The final validation losses are reported in Table~\ref{tab:training}.
 
-When interpreting these results, one needs to bear in mind, that pixel models minimize pixel-space MSE whereas JEPA models minimize an embedding-space MSE with VICReg regularization.
+When interpreting these results, one needs to bear in mind that pixel models minimize pixel-space MSE whereas JEPA models minimize an embedding-space MSE with VICReg regularization.
 Hence, values for both approaches are not directly comparable with each other.
 
 \begin{table}[h]
@@ -19,22 +19,100 @@ Model & Validation loss & Loss space & Epochs \\
 \midrule
 Pixel-CNN & 0.019 & pixel MSE & 100 \\
 Pixel-ViT & 0.022 & pixel MSE & 100 \\
-JEPA-CNN & 0.049 & embedding MSE + VICReg & 100 \\
 Patch-JEPA & 0.013 & embedding MSE + VICReg & 100 \\
 PatchDecoder & 0.00085 & pixel MSE (next frame) & 100 \\
 \bottomrule
 \end{tabular}
+
+\smallskip
+\raggedright\small\textit{Note.} MSE = mean squared error; VICReg = variance and covariance regularization.
 \end{table}
 
-\\
 
-For Patch-JEPA, a separate PatchDecoder was trained on the frozen encoder and predictor to map predicted patch embeddings back to pixel space (validation loss 0.000845, next-frame pixel MSE). All quantitative comparisons in the following subsections are therefore carried out in pixel space.
+For Patch-JEPA, a separate PatchDecoder was trained on the frozen encoder and predictor to map predicted patch embeddings back to pixel space (validation loss 0.000845, next-frame pixel MSE).
+All quantitative comparisons in the following subsections are therefore carried out in pixel space.
 
 \subsection {Evaluation}
 
+We evaluate Pixel-CNN, Pixel-ViT, and Patch-JEPA in three scenarios: one-step prediction accuracy, multi-step autoregressive rollout, and robustness to input noise.
+All evaluations use held-out validation trajectories in which the organism remains active throughout the evaluation window.
+This filter is essential, since every model predicts a black frame on trajectories with dying organisms, inflating the apparent performance of the weakest models.
+
+\paragraph{One-step prediction.} Table~\ref{tab:onestep} shows one-step prediction results on 2000 held-out frame pairs, together with the rollout competence horizon defined below.
+In addition to the mean squared error (MSE), we report two standard image-quality
+metrics.
+The peak signal-to-noise ratio (PSNR, in decibels) expresses the ratio between the maximum possible pixel value and the prediction error on a logarithmic scale.
+Higher values indicate a more accurate reconstruction.
+The structural similarity index (SSIM) compares local luminance, contrast, and structure between prediction and ground truth, values ranging from 0 to 1, where 1 corresponds to identical images.
+Unlike MSE, it is designed to reflect perceived structural similarity rather than per-pixel differences.
+Patch-JEPA achieves the best scores on all three metrics.
+However, these numbers must be interpreted with caution, since consecutive Lenia frames are highly similar and predicting no change at all already achieves a low error (identity baseline MSE of 0.00045).
+Strong one-step scores can thus be reached without capturing the underlying dynamics.
+
+\begin{table}[h]
+\caption{One-Step Prediction Accuracy and Rollout Competence Horizon on Active Trajectories}
+\label{tab:onestep}
+\begin{tabular}{lllll}
+\toprule
+Model & MSE & PSNR (dB) & SSIM & Competence horizon \\
+\midrule
+Pixel-CNN & 0.00829 & 20.93 & 0.918 & none \\
+Pixel-ViT & 0.00841 & 20.92 & 0.869 & step 8 \\
+Patch-JEPA & \textbf{0.00074} & \textbf{31.34} & \textbf{0.949} & \textbf{step 10} \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\small\textit{Note.} Best values per column are in bold. MSE = mean squared error; PSNR = peak signal-to-noise ratio; SSIM = structural similarity index.
+    \end{table}
+
+\paragraph{Multi-step rollout.} Each model was rolled out autoregressively for 30 steps from the same initial frames, averaged over five active validation trajectories (Figure~\ref{fig:rollout}).
+We compare against the identity baseline and define the competence horizon as the last step at which a model remains below this baseline.
+Patch-JEPA achieves the lowest step-one error (0.00173, roughly half the baseline of 0.00333) and the longest competence horizon (step 10), followed by Pixel-ViT (step 8).
+Pixel-CNN exceeds the baseline already at step one, meaning that predicting no change would outperform it at every horizon on active trajectories.
+Beyond step 10 all three models exceed the identity baseline.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\linewidth]{figures/multistep_rollout_comparison.png}
+\caption{Multi-step autoregressive rollout MSE over 30 steps, averaged over five active validation trajectories, compared to the identity baseline.}
+\label{fig:rollout}
+\end{figure}
+
+\paragraph{Robustness to input noise.}
+Adding Gaussian noise to the input frame degrades all models.
+In relative terms Patch-JEPA degrades most strongly (+768\% one-step MSE at $\sigma=0.2$ versus roughly +200\% to +260\% for the pixel models), but this percentage is misleading because its clean-input error is far lower.
+In absolute terms Patch-JEPA remains the most accurate model at every noise level, with an MSE of 0.0134 at $\sigma=0.2$ compared to 0.027-0.029 for both pixel models.
+
+\subsection{Interventions}
+Table~\ref{tab:interventions} reports the post-intervention MSE at step ten.
+Patch-JEPA achieves the lowest error in four of the five interventions, while Pixel-CNN is the weakest in four of five (Figure~\ref{fig:heatmap}).
+The global \texttt{scale\_density} perturbation is the hardest case for all models and the only one in which Pixel-ViT is best.
+After \texttt{zero\_region}, all models predict that surrounding live cells regrow into the killed area within one to two steps, matching the ground-truth simulation.
 
 
+\begin{table}[h]
+\caption{Post-Intervention MSE at Step 10 Against the Lenia Ground Truth}
+\label{tab:interventions}
+\begin{tabular}{llll}
+\toprule
+Intervention & Pixel-CNN & Pixel-ViT & Patch-JEPA \\
+\midrule
+inject\_blob & 0.1189 & 0.1260 & \textbf{0.0953} \\
+zero\_region & 0.1078 & 0.1035 & \textbf{0.0830} \\
+mirror\_patch & 0.1153 & 0.1124 & \textbf{0.0910} \\
+scale\_density & 0.1236 & \textbf{0.1128} & 0.1136 \\
+add\_noise & 0.1247 & 0.1198 & \textbf{0.0944} \\
+\bottomrule
+\end{tabular}
 
+\smallskip
+\raggedright\small\textit{Note.} Values are mean squared errors averaged over five active trajectories. The best value per intervention is shown in bold.
+\end{table}
 
-
-
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{figures/intervention_heatmap.png}
+\caption{Mean post-intervention MSE (steps 1 to 10) for every model and intervention combination.}
+\label{fig:heatmap}
+\end{figure}
