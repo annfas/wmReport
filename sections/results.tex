@@ -1,4 +1,5 @@
 % Author: Anna (~2 pages)
+\FloatBarrier
 \section{Results}
 
 \subsection {Model Training}
@@ -7,7 +8,7 @@ Hyperparameters for all models were selected with Optuna using a separate study 
 The best configurations were then trained for 100 epochs with cosine annealing and early stopping.
 The final validation losses are reported in Table~\ref{tab:training}.
 
-When interpreting these results, one needs to bear in mind that pixel models minimize pixel-space MSE whereas JEPA models minimize an embedding-space MSE with VICReg regularization.
+When interpreting these results, one needs to bear in mind that pixel models minimise pixel-space MSE whereas JEPA models minimise an embedding-space MSE with VICReg regularisation.
 Hence, values for both approaches are not directly comparable with each other.
 
 \begin{table}[h]
@@ -25,7 +26,7 @@ PatchDecoder & 0.00085 & pixel MSE (next frame) & 100 \\
 \end{tabular}
 
 \smallskip
-\raggedright\small\textit{Note.} MSE = mean squared error; VICReg = variance and covariance regularization.
+\raggedright\small\textit{Note.} MSE = mean squared error; VICReg = variance and covariance regularisation.
 \end{table}
 
 
